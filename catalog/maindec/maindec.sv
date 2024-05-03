@@ -1,53 +1,46 @@
-//////////////////////////////////////////////////////////////////////////////////
-// The Cooper Union
-// ECE 251 Spring 2024
-// Engineer: Prof Rob Marano
-// 
-//     Create Date: 2023-02-07
-//     Module Name: maindec
-//     Description: 32-bit RISC-based CPU main decoder (MIPS)
-//
-// Revision: 1.0
-//
-//////////////////////////////////////////////////////////////////////////////////
-`ifndef MAINDEC
-`define MAINDEC
+`ifndef DECODER
+`define DECODER
 
-`timescale 1ns/100ps
-
-module maindec
-    #(parameter n = 32)(
-    //
-    // ---------------- PORT DEFINITIONS ----------------
-    //
-    input  logic [5:0] op,
-    output logic       memtoreg, memwrite,
-    output logic       branch, alusrc,
-    output logic       regdst, regwrite,
-    output logic       jump,
-    output logic [1:0] aluop
+module decoder(
+    input reg_write, 
+    input [4:0] write_register,
+    output reg [31:0] write_en
 );
-    //
-    // ---------------- MODULE DESIGN IMPLEMENTATION ----------------
-    //
-    logic [8:0] controls; // 9-bit control vector
 
-    // controls has 9 logical signals
-    assign {regwrite, regdst, alusrc, branch, memwrite,
-            memtoreg, jump, aluop} = controls;
+wire [31:0] oe; // Output Enable
+dec5to32 dec(oe, write_register);
 
-    always @* begin
-        case(op)
-            6'b000000: controls <= 9'b110000010; // RTYPE
-            6'b100011: controls <= 9'b101001000; // LW
-            6'b101011: controls <= 9'b001010000; // SW
-            6'b000100: controls <= 9'b000100001; // BEQ
-            6'b001000: controls <= 9'b101000000; // ADDI
-            6'b000010: controls <= 9'b000000100; // J
-            default:   controls <= 9'bxxxxxxxxx; // illegal operation
-        endcase
-    end
+assign write_en[0] = 1'b0; // Always 0 for write enable of register 0
+
+assign write_en[1:31] = oe[1:31] & reg_write; // Enable write for registers 1 to 31 if reg_write is asserted
 
 endmodule
 
-`endif // MAINDEC
+module and5(
+    output g,
+    input a, b, c, d, e
+);
+assign g = a & b & c & d & e;
+endmodule
+
+module dec5to32(
+    output reg [31:0] out,
+    input [4:0] adr
+);
+integer i;
+reg [4:0] not_adr;
+
+always @(*) begin
+    for (i = 0; i < 5; i = i + 1) begin
+        not_adr[i] = ~adr[i];
+    end
+    out[0] = 1'b0; // Register 0 is always disabled
+    out[1] = not_adr[4] & not_adr[3] & not_adr[2] & not_adr[1] & adr[0]; // Enable register 1
+    out[2] = not_adr[4] & not_adr[3] & not_adr[2] & adr[1] & ~adr[0]; // Enable register 2
+    // Similarly, enable registers 3 to 31 based on address lines
+    // Add the corresponding logic here
+end
+
+endmodule
+
+`endif // DECODER
