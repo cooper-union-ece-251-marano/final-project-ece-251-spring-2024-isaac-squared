@@ -1,57 +1,52 @@
-//////////////////////////////////////////////////////////////////////////////////
-// The Cooper Union
-// ECE 251 Spring 2024
-// Engineer: Prof Rob Marano
-// 
-//     Create Date: 2023-02-07
-//     Module Name: tb_dff
-//     Description: Test bench for 32 bit D flip flop
-//
-// Revision: 1.0
-//
-//////////////////////////////////////////////////////////////////////////////////
-`ifndef TB_DFF
-`define TB_DFF
+`timescale 1ns/1ps
 
-`timescale 1ns/100ps
-`include "dff.sv"
-`include "../clock/clock.sv"
+module tb_d_ff;
 
-module tb_dff;
-    parameter n = 32; // #bits for an operand
-    wire clk;
-    logic enable;
-    logic reset;
-    logic [(n-1):0] d;
-    logic [(n-1):0] q;
+// Parameters
+parameter PERIOD = 10; // Clock period
+parameter HALF_PERIOD = PERIOD / 2;
 
-   initial begin
-        $dumpfile("dff.vcd");
-        $dumpvars(0, uut0, uut1);
-        //$monitor("d = %b (0x%0h)(%0d) q = %b (0x%0h)(%0d) ", d,d,d,q,q,q);
-        $monitor("time=%0t \t d=%h q=%h",$realtime, d, q);
-    end
+// Signals
+reg d, clk, rst_n;
+wire q;
 
-    initial begin
-        d <= #n'h8000;
-        enable <= 0;
-        #10 enable <= 1;
-        #10 reset <= 1;
-        #20 d <= #n'h0001;
-        #10 reset <= 0;
-        #10 reset <=0;
-        #20 d <= #n'h0001;
-        #100 enable <= 0;
-        $finish;        
-    end
+// Instantiate the D_FF module
+D_FF uut (
+    .q(q),
+    .d(d),
+    .rst_n(rst_n),
+    .clk(clk)
+);
 
-    dff uut0(
-        .CLOCK(clk), .RESET(reset), .D(d), .Q(q)
-    );
+// Clock generation
+initial begin
+    clk = 0;
+    forever #HALF_PERIOD clk = ~clk;
+end
 
-   clock uut1(
-        .ENABLE(enable),
-        .CLOCK(clk)
-    );
+// Reset generation
+initial begin
+    rst_n = 0;
+    #100;
+    rst_n = 1;
+end
+
+// Stimulus
+initial begin
+    // Test case 1: d = 0
+    d = 1'b0;
+    #PERIOD;
+    // Test case 2: d = 1
+    d = 1'b1;
+    #PERIOD;
+    // Test case 3: d = 0
+    d = 1'b0;
+    #PERIOD;
+    // Test case 4: d = 1
+    d = 1'b1;
+    #PERIOD;
+    // End simulation
+    $finish;
+end
+
 endmodule
-`endif // TB_DFF
