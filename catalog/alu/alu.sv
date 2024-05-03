@@ -1,52 +1,37 @@
-//////////////////////////////////////////////////////////////////////////////////
-// The Cooper Union
-// ECE 251 Spring 2024
-// Engineer: YOUR NAMES
-// 
-//     Create Date: 2023-02-07
-//     Module Name: alu
-//     Description: 32-bit RISC-based CPU alu (MIPS)
-//
-// Revision: 1.0
-// see https://github.com/Caskman/MIPS-Processor-in-Verilog/blob/master/ALU32Bit.v
-//////////////////////////////////////////////////////////////////////////////////
 `ifndef ALU
 `define ALU
 
-`timescale 1ns/100ps
-
-module alu
-    #(parameter n = 32)(
-    )(
-    input logic [n-1:0] a, b,        // 32-bit input operands
-    input logic [3:0] ctrl,          // Control signals (4-bit to accommodate more functions)
-    output logic [n-1:0] result,     // 32-bit result
-    output logic zero                // Flag that is true if result is zero
+module alu(
+    input [15:0] a,            // First input operand
+    input [15:0] b,            // Second input operand
+    input [2:0] alu_control,   // Control signal to determine operation
+    output reg [15:0] result,  // Result of the ALU operation
+    output zero                // Flag that is true when result is zero
 );
 
-// Flag for zero result
-assign zero = (result == 0);
+    reg [31:0] temp_result;    // Temporary register to hold extended results
 
-// Operation based on control signals
-always_comb begin
-    case (ctrl)
-        `ALU_CTRL_AND: result = a & b;     // AND
-        `ALU_CTRL_OR:  result = a | b;     // OR
-        `ALU_CTRL_ADD: result = a + b;     // ADD
-        `ALU_CTRL_SLL: result = a << b[4:0];  // Shift left logical (only use lower 5 bits of b)
-        `ALU_CTRL_NOR: result = ~(a | b);  // NOR
-        `ALU_CTRL_SRL: result = a >> b[4:0];  // Shift right logical (only use lower 5 bits of b)
-        `ALU_CTRL_SUB: result = a - b;     // SUBTRACT
-        `ALU_CTRL_SLT: begin               // Set on less than (signed)
-            if (a < b)
-                result = 1;
-            else
-                result = 0;
-        end
-        default: result = 0;  // Default case
-    endcase
-end
+    // Perform ALU operations based on alu_control signal
+    always @(*) begin
+        case (alu_control)
+            3'b000: result = a + b;                    // Addition
+            3'b001: result = a - b;                    // Subtraction
+            3'b010: temp_result = a * b;               // Multiplication
+            3'b011: result = ~(a | b);                 // NOR
+            3'b100: result = (a < b) ? 16'd1 : 16'd0;  // Set on less than
+            3'b101: begin                             // Division and modulus
+                     temp_result[15:0] = a / b;        // Division result in lower half
+                     temp_result[31:16] = a % b;       // Modulus result in upper half
+                    end
+            3'b110: result = temp_result[31:16];       // High part of temp_result (e.g., from modulus)
+            3'b111: result = temp_result[15:0];        // Low part of temp_result (e.g., from division)
+            default: result = a + b;                   // Default to addition if unspecified
+        endcase
+    end
 
-endmodule
+    // Set the zero output if the result is zero
+    assign zero = (result == 16'd0);
+
+endmodule 
 
 `endif // ALU
