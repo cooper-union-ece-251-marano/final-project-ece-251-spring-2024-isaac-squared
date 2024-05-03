@@ -101,4 +101,58 @@ always @(*) begin
             branch = 1'b1;
             mem_read = 1'b0;
             mem_write = 1'b0;
-            alu_src = 
+            alu_src = 1'b0;
+            reg_write = 1'b0;
+            sign_or_zero = 1'b1;
+        end
+        3'b111: begin // ADD IMMEDIATE (ADDI)
+            reg_dst = 2'b00; // Use Rt as the destination register
+            mem_to_reg = 2'b00;
+            alu_op = 2'b00; // ALU set to addition
+            jump = 1'b0;
+            branch = 1'b0;
+            mem_read = 1'b0;
+            mem_write = 1'b0;
+            alu_src = 1'b1; // Use immediate as second operand
+            reg_write = 1'b1;
+            sign_or_zero = 1'b1; // Assume sign extension for the immediate
+        end
+        3'b100: begin // JUMP (J)
+            reg_dst = 2'b00;
+            mem_to_reg = 2'b00;
+            alu_op = 2'b00;
+            jump = 1'b1;
+            branch = 1'b0;
+            mem_read = 1'b0;
+            mem_write = 1'b0;
+            alu_src = 1'b0;
+            reg_write = 1'b0;
+            sign_or_zero = 1'b0;
+        end
+        3'b101: begin // JUMP AND LINK (JAL)
+            reg_dst = 2'b10; // Destination register is special, typically the link register
+            mem_to_reg = 2'b10;
+            alu_op = 2'b00;
+            jump = 1'b1;
+            branch = 1'b0;
+            mem_read = 1'b0;
+            mem_write = 1'b0;
+            alu_src = 1'b0;
+            reg_write = 1'b1; // Write to link register
+            sign_or_zero = 1'b0;
+        end
+        3'b011: begin // SET LESS THAN IMMEDIATE (SLTI)
+            reg_dst = 2'b00; // Result goes to Rt
+            mem_to_reg = 2'b00;
+            alu_op = 2'b01; // ALU performs a set less than operation
+            jump = 1'b0;
+            branch = 1'b0;
+            mem_read = 1'b0;
+            mem_write = 1'b0;
+            alu_src = 1'b1; // Use immediate as second operand
+            reg_write = 1'b1;
+            sign_or_zero = 1'b1; // Immediate is sign-extended
+        end
+    endcase
+end
+endmodule
