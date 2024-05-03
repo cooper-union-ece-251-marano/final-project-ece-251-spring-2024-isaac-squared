@@ -1,49 +1,43 @@
-//////////////////////////////////////////////////////////////////////////////////
-// The Cooper Union
-// ECE 251 Spring 2024
-// Engineer: Prof Rob Marano
-// 
-//     Create Date: 2023-02-07
-//     Module Name: regfile
-//     Description: 32-bit RISC register file
-//
-// Revision: 1.0
-//
-//////////////////////////////////////////////////////////////////////////////////
-`ifndef REGFILE
-`define REGFILE
+`ifndef REGISTER_FILE
+`define REGISTER_FILE
 
-`timescale 1ns/100ps
+module register_file(
+    input            clk,  
+    input            rst,
+    // Write port
+    input            reg_write_en,
+    input   [2:0]    reg_write_dest,
+    input   [15:0]   reg_write_data,
+    // Read port 1
+    input   [2:0]    reg_read_addr_1,
+    output reg [15:0] reg_read_data_1,
+    // Read port 2
+    input   [2:0]    reg_read_addr_2,
+    output reg [15:0] reg_read_data_2
+);
+    // Array of 8 registers, each 16-bit wide
+    reg [15:0] reg_array [7:0];
 
-module regfile
-    // n=bit length of register; r=bit length of addr of registers
-    #(parameter n = 32, parameter r = 5)(
-    //
-    // ---------------- PORT DEFINITIONS ----------------
-    //
-    input  logic        clk, 
-    input  logic        we3, 
-    input  logic [(r-1):0]  ra1, ra2, wa3, 
-    input  logic [(n-1):0] wd3, 
-    output logic [(n-1):0] rd1, rd2
-    );
-    //
-    // ---------------- MODULE DESIGN IMPLEMENTATION ----------------
-    //
-    logic [(n-1):0] rf[(2**5-1):0];
+    // Reset and write logic
+    always @(posedge clk or posedge rst) begin
+        if (rst) begin
+            // Reset all registers to 0 using a loop
+            integer i;
+            for (i = 0; i < 8; i = i + 1) begin
+                reg_array[i] <= 16'b0;
+            end
+        end
+        else if (reg_write_en) begin
+            // Write data to the register specified by reg_write_dest
+            reg_array[reg_write_dest] <= reg_write_data;
+        end
+    end
 
-    // three ported register file
-    // read two ports combinationally
-    // write third port on rising edge of clk
-    // register 0 hardwired to 0
-    // note: for pipelined processor, write third port
-    // on falling edge of clk
-
-    always @(posedge clk)
-        if (we3) rf[wa3] <= wd3;	
-
-    assign rd1 = (ra1 != 0) ? rf[ra1] : 0;
-    assign rd2 = (ra2 != 0) ? rf[ra2] : 0;
+    // Read logic with prevention of reading from register 0
+    always @(*) begin
+        reg_read_data_1 = (reg_read_addr_1 == 0) ? 16'b0 : reg_array[reg_read_addr_1];
+        reg_read_data_2 = (reg_read_addr_2 == 0) ? 16'b0 : reg_array[reg_read_addr_2];
+    end
 endmodule
 
-`endif // REGFILE
+`endif // REGISTER_FILE
