@@ -1,50 +1,40 @@
-//////////////////////////////////////////////////////////////////////////////////
-// The Cooper Union
-// ECE 251 Spring 2024
-// Engineer: YOUR NAMES
-// 
-//     Create Date: 2023-02-07
-//     Module Name: aludec
-//     Description: 32-bit RISC ALU decoder
-//
-// Revision: 1.0
-//
-//////////////////////////////////////////////////////////////////////////////////
-`ifndef ALUDEC
-`define ALUDEC
+`ifndef ALU_CONTROL
+`define ALU_CONTROL
 
-`timescale 1ns/100ps
-
-module aludec(
-    input logic [5:0] funct,      // Function field from the instruction
-    output logic [3:0] alu_ctrl   // ALU control signals output
+module ALUControl(
+    input [1:0] ALUOp,  
+    input [3:0] Function,  
+    output reg [2:0] ALU_Control
 );
-
-    // Define the function codes for ALU operations
-    localparam ALU_ADD = 6'b100000;
-    localparam ALU_SUB = 6'b100010;
-    localparam ALU_AND = 6'b100100;
-    localparam ALU_OR  = 6'b100101;
-    localparam ALU_NOR = 6'b100111;
-    localparam ALU_SLL = 6'b000000;
-    localparam ALU_SRL = 6'b000010;
-    localparam ALU_SLT = 6'b101010;
-
-    // Decode the function field to generate ALU control signals
-    always_comb begin
-        case (funct)
-            ALU_ADD: alu_ctrl = 4'b0010; // ADD
-            ALU_SUB: alu_ctrl = 4'b0110; // SUBTRACT
-            ALU_AND: alu_ctrl = 4'b0000; // AND
-            ALU_OR:  alu_ctrl = 4'b0001; // OR
-            ALU_NOR: alu_ctrl = 4'b0100; // NOR
-            ALU_SLL: alu_ctrl = 4'b0011; // SHIFT LEFT LOGICAL
-            ALU_SRL: alu_ctrl = 4'b0101; // SHIFT RIGHT LOGICAL
-            ALU_SLT: alu_ctrl = 4'b0111; // SET LESS THAN
-            default: alu_ctrl = 4'bxxxx; // INVALID CODE
-        endcase
+    // Combine ALUOp and Function into a single 6-bit input
+    wire [5:0] ALUControlIn = {ALUOp, Function};  
+    
+    // Determine the ALU control signal based on ALUOp and Function
+    always @(*) begin
+        casex (ALUControlIn)
+            6'b11xxxx: ALU_Control = 3'b000;  // Example operation
+            6'b10xxxx: ALU_Control = 3'b100;  // Set less than
+            6'b01xxxx: ALU_Control = 3'b001;  // Subtract
+            6'b000000: ALU_Control = 3'b000;  // Addition
+            6'b000001: ALU_Control = 3'b001;  // Subtraction
+            6'b000010: ALU_Control = 3'b010;  // Multiply
+            6'b000011: ALU_Control = 3'b011;  // NOR
+            6'b000100: ALU_Control = 3'b100;  // SLT
+            default:   ALU_Control = 3'b000;  // Default to addition
+        endcase  
     end
+endmodule  
 
+
+
+// Verilog code for JR control unit
+module JR_Control(
+    input [1:0] alu_op,
+    input [3:0] funct,
+    output JRControl
+);
+    // Detect specific function code for Jump Register (JR) instruction
+    assign JRControl = ({alu_op, funct} == 6'b001000) ? 1'b1 : 1'b0;
 endmodule
 
-`endif // ALUDEC
+`endif // JR_CONTROL
