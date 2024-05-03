@@ -15,19 +15,19 @@
 
 `timescale 1ns/100ps
 
-module mux2
-    #(parameter n = 32)(
-    //
-    // ---------------- PORT DEFINITIONS ----------------
-    //
-    input  logic [(n-1):0] D0, D1,
-    input  logic S,
-    output logic [(n-1):0] Y
+module mux2 #(
+    parameter WIDTH = 16  // Default to 16 bits
+)(
+    input wire [WIDTH-1:0] input0,  // Input 0
+    input wire [WIDTH-1:0] input1,  // Input 1
+    input wire select,              // Selection signal
+    output wire [WIDTH-1:0] outputY // Output
 );
-    //
-    // ---------------- MODULE DESIGN IMPLEMENTATION ----------------
-    //
-    assign Y = S ? D1 : D0;
+
+    // Implement the multiplexer logic
+    // Select input1 if select is high, otherwise input0
+    assign outputY = select ? input1 : input0;
+
 endmodule
 
 `endif // MUX2
