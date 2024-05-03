@@ -17,13 +17,35 @@
 
 module alu
     #(parameter n = 32)(
-    //
-    // ---------------- PORT DEFINITIONS ----------------
-    //
+    )(
+    input logic [n-1:0] a, b,        // 32-bit input operands
+    input logic [3:0] ctrl,          // Control signals (4-bit to accommodate more functions)
+    output logic [n-1:0] result,     // 32-bit result
+    output logic zero                // Flag that is true if result is zero
 );
-    //
-    // ---------------- MODULE DESIGN IMPLEMENTATION ----------------
-    //
+
+// Flag for zero result
+assign zero = (result == 0);
+
+// Operation based on control signals
+always_comb begin
+    case (ctrl)
+        `ALU_CTRL_AND: result = a & b;     // AND
+        `ALU_CTRL_OR:  result = a | b;     // OR
+        `ALU_CTRL_ADD: result = a + b;     // ADD
+        `ALU_CTRL_SLL: result = a << b[4:0];  // Shift left logical (only use lower 5 bits of b)
+        `ALU_CTRL_NOR: result = ~(a | b);  // NOR
+        `ALU_CTRL_SRL: result = a >> b[4:0];  // Shift right logical (only use lower 5 bits of b)
+        `ALU_CTRL_SUB: result = a - b;     // SUBTRACT
+        `ALU_CTRL_SLT: begin               // Set on less than (signed)
+            if (a < b)
+                result = 1;
+            else
+                result = 0;
+        end
+        default: result = 0;  // Default case
+    endcase
+end
 
 endmodule
 
