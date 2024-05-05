@@ -16,7 +16,7 @@
 `timescale 1ns/100ps
 
 module adder
-    #(parameter n = 16)  // Setting the default parameter to 16 bits
+    #(parameter n = 16)  
     (
         input [n-1:0] a,  // First operand
         input [n-1:0] b,  // Second operand
