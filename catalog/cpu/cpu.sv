@@ -19,7 +19,7 @@
 `include "../datapath/datapath.sv"
 
 module cpu
-    #(parameter n = 32)(
+    #(parameter n = 16)(
     //
     // ---------------- PORT DEFINITIONS ----------------
     //
