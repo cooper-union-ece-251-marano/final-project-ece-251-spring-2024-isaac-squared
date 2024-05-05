@@ -1,16 +1,43 @@
-`ifndef D_FF
-`define D_FF
-module D_FF (
-    output reg q,
-    input d, rst_n, clk
-);  
-    always @(posedge clk or negedge rst_n) begin
-        if (~rst_n) begin
-            q <= 1'b0; // Reset: q = 0
+//////////////////////////////////////////////////////////////////////////////////
+// The Cooper Union
+// ECE 251 Spring 2024
+// Engineer: Prof Rob Marano
+// 
+//     Create Date: 2023-02-07
+//     Module Name: dff
+//     Description: 32 bit D flip flop
+//
+// Revision: 1.0
+//
+//////////////////////////////////////////////////////////////////////////////////
+`ifndef DFF
+`define DFF
+
+`timescale 1ns/100ps
+
+module dff
+    #(parameter n = 32)(
+    //
+    // ---------------- PORT DEFINITIONS ----------------
+    //
+    input  logic CLOCK, RESET,
+    input  logic [(n-1):0] D,
+    output logic [(n-1):0] Q
+);
+    //
+    // ---------------- MODULE DESIGN IMPLEMENTATION ----------------
+    //
+    always @(posedge CLOCK, posedge RESET)
+    begin
+        if (RESET)
+        begin
+            Q <= 0;
         end
-        else begin
-            q <= d; // Set q to d on clock edge
+        else
+        begin
+            Q <= D;
         end
     end
 endmodule
-`endif // D_FF
+
+`endif // DFF
