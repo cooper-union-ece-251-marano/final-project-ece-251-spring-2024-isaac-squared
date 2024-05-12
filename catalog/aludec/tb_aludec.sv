@@ -1,54 +1,60 @@
-`timescale 1ns / 100ps
-`include "ALUControl.sv"
+//////////////////////////////////////////////////////////////////////////////////
+// The Cooper Union
+// ECE 251 Spring 2024
+// Engineer: YOUR NAMES
+// 
+//     Create Date: 2023-02-07
+//     Module Name: tb_aludec
+//     Description: Test bench for simple behavioral ALU decoder
+//
+// Revision: 1.0
+//
+//////////////////////////////////////////////////////////////////////////////////
+`ifndef TB_ALUDEC
+`define TB_ALUDEC
 
-module tb_ALUControl;
-    // Inputs to the ALUControl
-    reg [1:0] ALUOp;
-    reg [3:0] Function;
+`timescale 1ns/100ps
+`include "aludec.sv"
 
-    // Output from the ALUControl
-    wire [2:0] ALU_Control;
+module tb_aludec;
+    parameter n = 32;
+    reg [5:0] OpCode;    // Assuming a 6-bit opcode for the ALU decoder
+    reg [5:0] Funct;     // Assuming a 6-bit function code specific to certain ALU operations
+    wire [3:0] ALUOp;    // Output ALU operation code
 
-    // Instantiate the ALUControl
-    ALUControl uut (
-        .ALUOp(ALUOp),
-        .Function(Function),
-        .ALU_Control(ALU_Control)
+    // Instantiate the ALU decoder
+    aludec #(.n(n)) DUT (
+        .OpCode(OpCode),
+        .Funct(Funct),
+        .ALUOp(ALUOp)
     );
 
-    // Test sequence
+    // Test stimulus
     initial begin
         // Initialize inputs
-        ALUOp = 0; Function = 0;
-        #100; // Wait for the initial reset
+        OpCode = 6'b000000; 
+        Funct = 6'b000000;
 
-        // Test various combinations of ALUOp and Function
-        ALUOp = 2'b11; Function = 4'bxxxx; // Test for ALUOp = 3'b11xx
-        #10;
-        ALUOp = 2'b10; Function = 4'bxxxx; // Test for ALUOp = 3'b10xx
-        #10;
-        ALUOp = 2'b01; Function = 4'bxxxx; // Test for ALUOp = 3'b01xx
-        #10;
-        ALUOp = 2'b00; Function = 4'b0000; // Test for Function = 4'b0000
-        #10;
-        ALUOp = 2'b00; Function = 4'b0001; // Test for Function = 4'b0001
-        #10;
-        ALUOp = 2'b00; Function = 4'b0010; // Test for Function = 4'b0010
-        #10;
-        ALUOp = 2'b00; Function = 4'b0011; // Test for Function = 4'b0011
-        #10;
-        ALUOp = 2'b00; Function = 4'b0100; // Test for Function = 4'b0100
-        #10;
-        ALUOp = 2'b00; Function = 4'b0101; // Additional test cases as needed
-        #10;
+        // Apply test cases
+        #10 OpCode = 6'b000000; Funct = 6'b100000; // Example: ADD operation
+        #10 OpCode = 6'b000000; Funct = 6'b100010; // Example: SUB operation
+        #10 OpCode = 6'b000000; Funct = 6'b100100; // Example: AND operation
+        #10 OpCode = 6'b000000; Funct = 6'b100101; // Example: OR operation
+        #10 OpCode = 6'b000000; Funct = 6'b101010; // Example: SLT operation (Set on Less Than)
+        #10 OpCode = 6'b001000;                   // Example: ADDI (Immediate ADD, if applicable)
 
-        // End of testing
-        $finish;
+        // More test cases can be added here for different instructions
+
+        // Complete testing
+        #20 $finish;
     end
 
-    // Monitoring changes to inputs and output
+    // Optional: Display results
     initial begin
-        $monitor("At time %t, ALUOp = %b, Function = %b, ALU_Control = %b",
-                 $time, ALUOp, Function, ALU_Control);
+        $monitor("Time = %t, OpCode = %b, Funct = %b, ALUOp = %b",
+                 $time, OpCode, Funct, ALUOp);
     end
+
 endmodule
+
+`endif // TB_ALUDEC
