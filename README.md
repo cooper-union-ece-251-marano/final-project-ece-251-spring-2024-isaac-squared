@@ -8,7 +8,7 @@ This design emphasizes the MIPS architecture's efficiency and alignment with the
 
 ![DataPath](datapath.png)
 ![ISA](ISA.jpg)
-
+![Instruction Format](Instruction_Format.jpg)
 
 
 # Catalog of Verilog Components to Build and Simulate a MIPS-based RISC.
