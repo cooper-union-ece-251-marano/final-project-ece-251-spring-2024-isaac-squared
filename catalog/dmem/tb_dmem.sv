@@ -1,62 +1,65 @@
-`timescale 1ns/1ps
+//////////////////////////////////////////////////////////////////////////////////
+// The Cooper Union
+// ECE 251 Spring 2024
+// Engineer: Prof Rob Marano
+// 
+//     Create Date: 2023-02-07
+//     Module Name: tb_dmem
+//     Description: Test bench for data memory
+//
+// Revision: 1.0
+//
+//////////////////////////////////////////////////////////////////////////////////
+`ifndef TB_DMEM
+`define TB_DMEM
 
-module tb_data_memory;
+`timescale 1ns/100ps
+`include "dmem.sv"
+`include "../clock/clock.sv"
 
-    // Parameters
-    parameter MEM_DEPTH = 256;
+module tb_dmem;
+    parameter n = 32; // bit length of registers/memory
+    parameter r = 6; // we are only addressing 64=2**6 mem slots in imem
+    logic [(n-1):0] readdata, writedata;
+    logic [(n-1):0] dmem_addr;
+    logic write_enable;
+    logic clk, clock_enable;
 
-    // Signals
-    reg clk;
-    reg [15:0] mem_access_addr;
-    reg [15:0] mem_write_data;
-    reg mem_write_en;
-    reg mem_read;
-    wire [15:0] mem_read_data;
+   initial begin
+        $dumpfile("dmem.vcd");
+        $dumpvars(0, uut, uut1);
+        $monitor("time=%0t write_enable=%b dmem_addr=%h readdata=%h writedata=%h",
+            $realtime, write_enable, dmem_addr, readdata, writedata);
+    end
 
-    // Instantiate the data_memory module
-    data_memory dut (
-        .clk(clk),
-        .mem_access_addr(mem_access_addr),
-        .mem_write_data(mem_write_data),
-        .mem_write_en(mem_write_en),
-        .mem_read(mem_read),
-        .mem_read_data(mem_read_data)
-    );
-
-    // Clock generation
-    always #5 clk = ~clk;
-
-    // Testbench stimulus
     initial begin
-        $display("Testing Data Memory");
-        clk = 0;
-        mem_access_addr = 16'd0;
-        mem_write_data = 16'd1234;
-        mem_write_en = 1'b0;
-        mem_read = 1'b0;
-
-        // Write data to memory
-        #10;
-        mem_write_en = 1'b1;
-        #10;
-        mem_write_en = 1'b0;
-        #10;
-
-        // Read data from memory
-        mem_read = 1'b1;
-        mem_access_addr = 16'd0;
-        #10;
-        mem_access_addr = 16'd1;
-        #10;
-        mem_read = 1'b0;
-
-        $finish;
+        #10 clock_enable <= 1;
+        #20 writedata = #(n)'hFFFFFFFF;
+        #20 dmem_addr <= #(r)'b000000;
+        #20 write_enable <= 1;
+        #20 write_enable <= 0;
+        #20 dmem_addr <= #(r)'b000001;
+        #20 writedata = #(n)'h0000FFFF;
+        #20 write_enable <= 1;
+        #20 write_enable <= 0;
+        #20 dmem_addr <= #(r)'b000010;
+        #20 writedata = #(n)'h00000000;
+        #20 write_enable <= 1;
+        #20 write_enable <= 0;
+        #20 $finish;
     end
 
-    // Monitor
-    always @* begin
-        $display("Time=%t, clk=%b, mem_access_addr=%d, mem_write_data=%d, mem_write_en=%b, mem_read=%b, mem_read_data=%d",
-                 $time, clk, mem_access_addr, mem_write_data, mem_write_en, mem_read, mem_read_data);
-    end
-
+   dmem uut(
+        .clk(clk),
+        .write_enable(write_enable),
+        .addr(dmem_addr),
+        .writedata(writedata),
+        .readdata(readdata)
+    );
+    clock uut1(
+        .ENABLE(clock_enable),
+        .CLOCK(clk)
+    );
 endmodule
+
+`endif // TB_IMEM
