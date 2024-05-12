@@ -10,6 +10,15 @@ This design emphasizes the MIPS architecture's efficiency and alignment with the
 ![ISA](ISA.jpg)
 ![Instruction Format](Instruction_Format.jpg)
 
+This project involved a deep dive into the architectural components and operational intricacies of microprocessors, focusing extensively on the development and integration of various key elements such as the arithmetic logic unit (ALU), with particular attention to the adder component.
+
+Throughout the project, we utilized SystemVerilog for RTL design to implement and simulate each component of the MIPS architecture. This process included writing test benches for modules like the adder to ensure functional and timing correctness. One technical challenge was ensuring that all components were synchronized to work seamlessly within the MIPS control logic framework, requiring meticulous attention to the timing and functional dependencies between various registers and execution units.
+
+A critical takeaway from this project was the significant impact of time management on the overall success and stress levels associated with engineering projects. The complexity of debugging and integrating multiple hardware description language (HDL) components highlighted the need for a proactive approach to scheduling and iterative testing. Delaying intensive testing phases to the latter stages of the project resulted in conflicts with other academic responsibilities, emphasizing the importance of early and continuous testing cycles.
+
+This experience has not only sharpened my technical skills in digital system design and Verilog coding but also reinforced the essential engineering practice of forward planning and risk management in project execution. It underscored the importance of integrating continuous evaluation and adjustment phases throughout the project lifecycle, ensuring that each module not only meets design specifications individually but also operates cohesively within the overall system architecture.
+
+This project has profoundly impacted my approach to future engineering challenges, instilling a disciplined methodology for managing complex projects under tight deadlines, which will be invaluable in my professional engineering career.
 
 # Catalog of Verilog Components to Build and Simulate a MIPS-based RISC.
 
