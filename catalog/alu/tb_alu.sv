@@ -1,69 +1,68 @@
-`timescale 1ns / 100ps
+//////////////////////////////////////////////////////////////////////////////////
+// The Cooper Union
+// ECE 251 Spring 2024
+// Engineer: YOUR NAMES
+// 
+//     Create Date: 2023-02-07
+//     Module Name: tb_alu
+//     Description: Test bench for simple behavioral ALU
+//
+// Revision: 1.0
+//
+//////////////////////////////////////////////////////////////////////////////////
+`ifndef TB_ALU
+`define TB_ALU
+
+`timescale 1ns/100ps
 `include "alu.sv"
 
 module tb_alu;
-    // Inputs to the ALU
-    reg [15:0] a;
-    reg [15:0] b;
-    reg [2:0] alu_control;
-
-    // Outputs from the ALU
-    wire [15:0] result;
-    wire zero;
+    parameter n = 32;
+    reg [n-1:0] A, B;
+    reg [3:0] ALUOp;
+    wire [n-1:0] Result;
+    wire Zero;
 
     // Instantiate the ALU
-    alu uut (
-        .a(a), 
-        .b(b), 
-        .alu_control(alu_control), 
-        .result(result), 
-        .zero(zero)
+    alu #(.n(n)) DUT (
+        .A(A),
+        .B(B),
+        .ALUOp(ALUOp),
+        .Result(Result),
+        .Zero(Zero)
     );
 
-    // Initialize all inputs
+    // Test stimulus
     initial begin
-        a = 0; b = 0; alu_control = 0;
-        #100; // Wait 100 ns for global reset
+        // Initialize inputs
+        A = 0;
+        B = 0;
+        ALUOp = 0;
 
-        // Test Addition
-        a = 16'd15; b = 16'd10; alu_control = 3'b000;
-        #10; // Perform the operation and wait
+        // Apply test cases
+        // Example operation codes might need to be adjusted based on actual ALU design
+        #10 A = 32'hA5A5A5A5; B = 32'h5A5A5A5A; ALUOp = 4'b0000; // Example ADD operation
+        #10 ALUOp = 4'b0001; // Example SUB operation
+        #10 ALUOp = 4'b0010; // Example AND operation
+        #10 ALUOp = 4'b0011; // Example OR operation
+        #10 ALUOp = 4'b0100; // Example XOR operation
+        #10 ALUOp = 4'b0101; // Example NOR operation
+        #10 ALUOp = 4'b0110; // Example SLT operation (Set on Less Than)
+        #10 ALUOp = 4'b0111; // Example SLL (Shift Left Logical)
+        #10 ALUOp = 4'b1000; // Example SRL (Shift Right Logical)
+        #10 ALUOp = 4'b1001; // Example SRA (Shift Right Arithmetic)
+        #10 ALUOp = 4'b1010; // Additional operations as needed
 
-        // Test Subtraction
-        a = 16'd20; b = 16'd10; alu_control = 3'b001;
-        #10;
-
-        // Test Multiplication
-        a = 16'd4; b = 16'd5; alu_control = 3'b010;
-        #10;
-
-        // Test NOR
-        a = 16'd0xFFFF; b = 16'd0xFFFF; alu_control = 3'b011;
-        #10;
-
-        // Test Set on Less Than
-        a = 16'd5; b = 16'd10; alu_control = 3'b100;
-        #10;
-
-        // Test Division and Modulus
-        a = 16'd10; b = 16'd3; alu_control = 3'b101;
-        #10;
-
-        // Check results from previous high temp_result
-        alu_control = 3'b110;
-        #10;
-
-        // Check results from previous low temp_result
-        alu_control = 3'b111;
-        #10;
-
-        // Complete the testing
-        $finish;
+        // Complete testing
+        #10 $finish;
     end
 
-    // Monitor the results
+    // Optional: Display results
     initial begin
-        $monitor("Time = %t, a = %d, b = %d, Control = %b, Result = %d, Zero = %b", 
-                 $time, a, b, alu_control, result, zero);
+        $monitor("Time = %t, A = %h, B = %h, ALUOp = %b, Result = %h, Zero = %b",
+                  $time, A, B, ALUOp, Result, Zero);
     end
+
 endmodule
+
+`endif // TB_ALU
