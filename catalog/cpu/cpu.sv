@@ -19,7 +19,7 @@
 `include "../datapath/datapath.sv"
 
 module cpu
-    #(parameter n = 32)(
+    #(parameter n = 16)(
     //
     // ---------------- PORT DEFINITIONS ----------------
     //
@@ -38,7 +38,7 @@ module cpu
     logic       memtoreg, alusrc, regdst, regwrite, jump, pcsrc, zero;
     logic [2:0] alucontrol;
     
-    controller c(instr[(31):26], instr[5:0], zero,
+    controller c(instr[(15):10], instr[5:0], zero,
                     memtoreg, memwrite, pcsrc,
                     alusrc, regdst, regwrite, jump,
                     alucontrol);

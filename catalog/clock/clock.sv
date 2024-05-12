@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 // The Cooper Union
 // ECE 251 Spring 2024
-// Engineer: Prof Rob Marano
+// Engineer: Isaac Schertz, Isaac Amar
 // 
 //     Create Date: 2023-02-07
 //     Module Name: clock
@@ -15,44 +15,47 @@
 
 `timescale 1ns/100ps
 
+// Clock generator module that creates a clock signal with a configurable frequency
 module clock
-    #(parameter ticks = 10)(
-    //
-    // ---------------- PORT DEFINITIONS ----------------
-    //
-    input ENABLE,
-    output reg CLOCK
-);
-    //
-    // ---------------- MODULE DESIGN IMPLEMENTATION ----------------
-    //
-    reg start_clock;
-    real clock_on = ticks/2; // duty cycle = 50%
-    real clock_off = ticks/2;
+    #(parameter ticks = 10)  // Number of time units for a complete cycle
+    (
+    input ENABLE,            // Enable input to start or stop the clock
+    output reg CLOCK         // Clock output
+    );
 
-    // initialize variables
+    // Variables for clock control
+    reg start_clock;
+    real clock_on = ticks / 2.0;  // Time the clock signal is high
+    real clock_off = ticks / 2.0; // Time the clock signal is low
+
+    // Initialize variables
     initial begin
-      CLOCK <= 0;
-      start_clock <= 0;
+      CLOCK <= 0;              // Start with CLOCK in low state
+      start_clock <= 0;        // Clock is not started initially
     end
 
+    // Handle enable signal to start or stop the clock
     always @(posedge ENABLE or negedge ENABLE) begin
         if (ENABLE) begin
-            start_clock = 1;
+            start_clock <= 1;  // Start clock when ENABLE is high
         end
         else begin
-            start_clock = 0;
+            start_clock <= 0;  // Stop clock when ENABLE is low
         end
-        // #ticks CLOCK = ~CLOCK;
     end
+
+    // Generate the clock signal when started
     always @(start_clock) begin
-        CLOCK = 0;
-        while (start_clock) begin
-            #(clock_off) CLOCK = 1;
-            #(clock_on) CLOCK = 0;
+        if (start_clock) begin
+            forever begin
+                #(clock_off) CLOCK = 1;  // Clock high
+                #(clock_on) CLOCK = 0;   // Clock low
+            end
+        end else begin
+            CLOCK = 0;  // Ensure the CLOCK is held low when not started
         end
-        CLOCK = 0;
     end
+
 endmodule
 
 `endif // CLOCK

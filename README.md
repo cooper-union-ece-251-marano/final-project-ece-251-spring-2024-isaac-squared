@@ -1,3 +1,25 @@
+[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-24ddc0f5d75046c5622901739e7c5dd533143b0c8e959d652212380cedb1ea36.svg)](https://classroom.github.com/a/pelSJLGu)
+# 32-Bit MIPS processor- Isaac*Isaac
+The Von Neumann architecture, integral to modern computing systems, combines data and instructions in a single memory space. This report details the design and implementation of a 32-bit MIPS processor following this architecture, focusing on executing a subset of the MIPS instruction set with a single-cycle execution model for simplicity and predictable performance.
+
+The processor features key components such as an Arithmetic Logic Unit (ALU) for core computations including arithmetic and logic operations, a control unit for directing system operations, and segregated instruction and data memory segments for efficient information management. The instruction memory sequentially stores executable code, while data memory handles variable storage and retrieval, influenced by processed instructions.
+
+This design emphasizes the MIPS architecture's efficiency and alignment with the unified memory approach of the Von Neumann model, promising a detailed exploration of component functionality and system integration in subsequent sections.
+
+![DataPath](datapath.png)
+![ISA](ISA.jpg)
+![Instruction Format](Instruction_Format.jpg)
+
+This project involved a deep dive into the architectural components and operational intricacies of microprocessors, focusing extensively on the development and integration of various key elements such as the arithmetic logic unit (ALU), with particular attention to the adder component.
+
+Throughout the project, we utilized SystemVerilog for RTL design to implement and simulate each component of the MIPS architecture. This process included writing test benches for modules like the adder to ensure functional and timing correctness. One technical challenge was ensuring that all components were synchronized to work seamlessly within the MIPS control logic framework, requiring meticulous attention to the timing and functional dependencies between various registers and execution units.
+
+A critical takeaway from this project was the significant impact of time management on the overall success and stress levels associated with engineering projects. The complexity of debugging and integrating multiple hardware description language (HDL) components highlighted the need for a proactive approach to scheduling and iterative testing. Delaying intensive testing phases to the latter stages of the project resulted in conflicts with other academic responsibilities, emphasizing the importance of early and continuous testing cycles.
+
+This experience has not only sharpened my technical skills in digital system design and Verilog coding but also reinforced the essential engineering practice of forward planning and risk management in project execution. It underscored the importance of integrating continuous evaluation and adjustment phases throughout the project lifecycle, ensuring that each module not only meets design specifications individually but also operates cohesively within the overall system architecture.
+
+This project has profoundly impacted my approach to future engineering challenges, instilling a disciplined methodology for managing complex projects under tight deadlines, which will be invaluable in my professional engineering career.
+
 # Catalog of Verilog Components to Build and Simulate a MIPS-based RISC.
 
 This work is based off the MIPS Verilog code by [Harris and Harris](https://pages.hmc.edu/harris/ddca/ddca2e.html)
