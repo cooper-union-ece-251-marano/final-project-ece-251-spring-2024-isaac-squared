@@ -1,4 +1,11 @@
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-24ddc0f5d75046c5622901739e7c5dd533143b0c8e959d652212380cedb1ea36.svg)](https://classroom.github.com/a/pelSJLGu)
+
+The Von Neumann architecture, integral to modern computing systems, combines data and instructions in a single memory space. This report details the design and implementation of a 32-bit MIPS processor following this architecture, focusing on executing a subset of the MIPS instruction set with a single-cycle execution model for simplicity and predictable performance.
+
+The processor features key components such as an Arithmetic Logic Unit (ALU) for core computations including arithmetic and logic operations, a control unit for directing system operations, and segregated instruction and data memory segments for efficient information management. The instruction memory sequentially stores executable code, while data memory handles variable storage and retrieval, influenced by processed instructions.
+
+This design emphasizes the MIPS architecture's efficiency and alignment with the unified memory approach of the Von Neumann model, promising a detailed exploration of component functionality and system integration in subsequent sections.
+
 ![DataPath](datapath.png)
 ![ISA](ISA.jpg)
 
