@@ -1,4 +1,9 @@
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-24ddc0f5d75046c5622901739e7c5dd533143b0c8e959d652212380cedb1ea36.svg)](https://classroom.github.com/a/pelSJLGu)
+![DataPath](datapath.png)
+![ISA](ISA.jpg)
+
+
+
 # Catalog of Verilog Components to Build and Simulate a MIPS-based RISC.
 
 This work is based off the MIPS Verilog code by [Harris and Harris](https://pages.hmc.edu/harris/ddca/ddca2e.html)
